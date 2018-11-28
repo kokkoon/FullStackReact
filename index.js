@@ -4,9 +4,11 @@ const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const keys = require('./config/keys');
-require('./models/user');
+require('./models/User');
+require('./models/Survey');
 require('./services/passport');
 
+mongoose.Promise = global.Promise;
 mongoose.connect(keys.mongoURI);
 
 const app = express();
@@ -23,6 +25,7 @@ app.use(passport.session());
 
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
+require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
   // Express will serve up production assets
@@ -33,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
   // if it doesn't recognize the route
   const path = require('path');
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirnam, 'client', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
 
